@@ -22,6 +22,7 @@ namespace MonTool.UI.Views.MainPageView
 
         public MainPageViewModel()
         {
+
             monitorLogic = new MonitorLogic(capabilitiesLogic);
 
             monitorLogic.GetAll().ToList().ForEach(m =>
