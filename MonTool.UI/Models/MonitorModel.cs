@@ -43,7 +43,24 @@ namespace MonTool.UI.Models
         public VCPFeatureModel InputSourceFeature { get; }
         public VCPFeatureModel ColorPresetFeature { get; }
 
-        public string Name { get { return monitor.Model; } }
+        public string Name
+        {
+            get
+            {
+                if (monitor.Model.Trim() != String.Empty)
+                {
+                    return monitor.Model;
+                }
+                else if (monitor.PhysicalMonitor.szPhysicalMonitorDescription.Trim() != String.Empty)
+                {
+                    return monitor.PhysicalMonitor.szPhysicalMonitorDescription;
+                }
+                else
+                {
+                    return "Unknown";
+                }
+            }
+        }
 
         public InputSourceModel SelectedInputSource { get { return selectedInputSource; } set { selectedInputSource = value; OnPropertyChanged(nameof(SelectedInputSource)); } }
         public ObservableCollection<InputSourceModel> InputSources { get { return inputSources; } set { inputSources = value; OnPropertyChanged(nameof(InputSources)); } }
