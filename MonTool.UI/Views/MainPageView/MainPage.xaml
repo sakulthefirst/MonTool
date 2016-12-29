@@ -1,0 +1,59 @@
+﻿<Page x:Class="MonTool.UI.Views.MainPageView.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MonTool.UI.Views.MainPageView"
+      xmlns:userControls="clr-namespace:MonTool.UI.UserControls"
+      xmlns:converter="clr-namespace:MonTool.UI.Converter"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="300"
+ 
+      Title="MonControl">
+
+    <Page.DataContext>
+        <local:MainPageViewModel></local:MainPageViewModel>
+    </Page.DataContext>
+    <Page.Resources>
+        <converter:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"></converter:BoolToVisibilityConverter>
+    </Page.Resources>
+
+    <Grid>
+        <StackPanel>
+            <Label   Content="Monitor"></Label>
+            <ComboBox HorizontalAlignment="Center" Width="200" ItemsSource="{Binding Path=Monitors}" SelectedValue="{Binding Path=SelectedMonitor}" DisplayMemberPath="Name"></ComboBox>
+            <Label  HorizontalAlignment="Center" Content="Color Preset"></Label>
+            <ComboBox IsEnabled="{Binding SelectedMonitor.ColorPresetFeature.IsCapable}" HorizontalAlignment="Center" Width="200" ItemsSource="{Binding Path=SelectedMonitor.ColorPresets}" SelectedValue="{Binding Path=SelectedMonitor.SelectedColorPreset}" DisplayMemberPath="Name "></ComboBox>
+            <userControls:VCPFeatureSlider  DataContext="{Binding SelectedMonitor.LuminanceFeature}"></userControls:VCPFeatureSlider>
+            <userControls:VCPFeatureSlider DataContext="{Binding SelectedMonitor.ContrastFeature}"></userControls:VCPFeatureSlider>
+
+            <Expander Visibility="{Binding SelectedMonitor.IsCapableVideoGainFeature, Converter={StaticResource boolToVisibilityConverter}}" IsExpanded="False" Header="Gain" >
+                <StackPanel IsEnabled="{Binding SelectedMonitor.SelectedColorPreset.IsUserColorPreset}">
+                    <userControls:VCPFeatureSlider DataContext="{Binding SelectedMonitor.VideoGainRedFeature}"></userControls:VCPFeatureSlider>
+                    <userControls:VCPFeatureSlider DataContext="{Binding SelectedMonitor.VideoGainGreenFeature}"></userControls:VCPFeatureSlider>
+                    <userControls:VCPFeatureSlider DataContext="{Binding SelectedMonitor.VideoGainBlueFeature}"></userControls:VCPFeatureSlider>
+                </StackPanel>
+            </Expander>
+
+            <Expander Visibility="{Binding SelectedMonitor.IsCapableVideoBlackLevelFeature, Converter={StaticResource boolToVisibilityConverter}}" IsExpanded="False" Header="Black Level">
+                <StackPanel>
+                    <userControls:VCPFeatureSlider DataContext="{Binding SelectedMonitor.VideoBlackLevelRedFeature}"></userControls:VCPFeatureSlider>
+                    <userControls:VCPFeatureSlider DataContext="{Binding SelectedMonitor.VideoBlackLevelGreenFeature}"></userControls:VCPFeatureSlider>
+                    <userControls:VCPFeatureSlider DataContext="{Binding SelectedMonitor.VideoBlackLevelBlueFeature}"></userControls:VCPFeatureSlider>
+                </StackPanel>
+            </Expander>
+
+
+
+
+            <StackPanel Visibility="{Binding SelectedMonitor.InputSourceFeature.IsCapable,Converter={StaticResource boolToVisibilityConverter}}" Background="LightGray">
+                <Label  HorizontalAlignment="Center" Content="Input Source"></Label>
+                <StackPanel  Orientation="Horizontal">
+                    <ComboBox  HorizontalAlignment="Center" Margin="5,5,5,5" Width="120"  ItemsSource="{Binding Path=SelectedMonitor.InputSources}" SelectedValue="{Binding Path=SelectedMonitor.SelectedInputSource}" DisplayMemberPath="Name "></ComboBox>
+                    <Button Margin="5,5,5,5" HorizontalAlignment="Center" Width="80" Content="Change" Command="{Binding SelectedMonitor.SelectedInputSource.ChangeInputSourceCommand}"></Button>
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Page>
