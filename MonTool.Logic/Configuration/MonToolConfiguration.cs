@@ -8,6 +8,8 @@ namespace MonTool.Logic.Configuration
 {
     static class MonToolConfiguration
     {
-        public static readonly int REQUEST_TIMEOUT = 100;
+        public static readonly int REQUEST_TIMEOUT = 200;
+        public static readonly int REQUEST_REPEATS= 4;
+
     }
 }

@@ -19,13 +19,14 @@ namespace MonTool.Logic.Implementation
             uint pvct = 0;
             uint pdwCurrentValue = 0;
             uint pdwMaximumValue = 0;
-            var result = GetVCPFeatureAndVCPFeatureReply(monitor.PhysicalMonitor.hPhysicalMonitor, (byte)vcpFeature, ref pvct, ref pdwCurrentValue, ref pdwMaximumValue);
+            bool result = GetVCPFeatureAndVCPFeatureReply(monitor.PhysicalMonitor.hPhysicalMonitor, (byte)vcpFeature, ref pvct, ref pdwCurrentValue, ref pdwMaximumValue);
 
             //Bugfix for slow Monitors
-            if (!result)
+            for (int i = 0; i < MonToolConfiguration.REQUEST_REPEATS && result == false; i++)
             {
+
                 System.Threading.Thread.Sleep(MonToolConfiguration.REQUEST_TIMEOUT);
-                GetVCPFeatureAndVCPFeatureReply(monitor.PhysicalMonitor.hPhysicalMonitor, (byte)vcpFeature, ref pvct, ref pdwCurrentValue, ref pdwMaximumValue);
+                result = GetVCPFeatureAndVCPFeatureReply(monitor.PhysicalMonitor.hPhysicalMonitor, (byte)vcpFeature, ref pvct, ref pdwCurrentValue, ref pdwMaximumValue);
             }
 
             return new VCPFeatureValue { CurrentValue = pdwCurrentValue, MaximumValue = pdwMaximumValue };
@@ -34,10 +35,10 @@ namespace MonTool.Logic.Implementation
 
         public bool SetVCPFeature(Monitor monitor, VCPFeature vcpFeature, uint newValue)
         {
-            var result = SetVCPFeature(monitor.PhysicalMonitor.hPhysicalMonitor, (byte)vcpFeature, newValue);
+            bool result = SetVCPFeature(monitor.PhysicalMonitor.hPhysicalMonitor, (byte)vcpFeature, newValue);
 
             //Bugfix for slow Monitors
-            if (!result)
+            for (int i = 0; i < MonToolConfiguration.REQUEST_REPEATS && result == false; i++)
             {
                 System.Threading.Thread.Sleep(MonToolConfiguration.REQUEST_TIMEOUT);
                 result = SetVCPFeature(monitor.PhysicalMonitor.hPhysicalMonitor, (byte)vcpFeature, newValue);

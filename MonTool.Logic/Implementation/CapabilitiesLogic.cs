@@ -46,24 +46,27 @@ namespace MonTool.Logic.Implementation
         {
             char[] pszASCIICapabilitiesString;
             uint dwCapabilitiesStringLengthInCharacters = 0;
-            var result = GetCapabilitiesStringLength(monitor.PhysicalMonitor.hPhysicalMonitor, ref dwCapabilitiesStringLengthInCharacters);
+            bool result = GetCapabilitiesStringLength(monitor.PhysicalMonitor.hPhysicalMonitor, ref dwCapabilitiesStringLengthInCharacters);
 
-            if (!result)
+            //Slow Monitor fix
+            for (int i = 0; i < MonToolConfiguration.REQUEST_REPEATS && result==false; i++)
             {
                 System.Threading.Thread.Sleep(MonToolConfiguration.REQUEST_TIMEOUT);
-                GetCapabilitiesStringLength(monitor.PhysicalMonitor.hPhysicalMonitor, ref dwCapabilitiesStringLengthInCharacters);
+                result = GetCapabilitiesStringLength(monitor.PhysicalMonitor.hPhysicalMonitor, ref dwCapabilitiesStringLengthInCharacters);
             }
 
 
-
+            Console.WriteLine(result);
             pszASCIICapabilitiesString = new char[dwCapabilitiesStringLengthInCharacters];
 
             result = CapabilitiesRequestAndCapabilitiesReply(monitor.PhysicalMonitor.hPhysicalMonitor, pszASCIICapabilitiesString, dwCapabilitiesStringLengthInCharacters);
 
-            if (!result)
+            //Slow Monitor fix
+
+            for (int i = 0; i < MonToolConfiguration.REQUEST_REPEATS && result==false; i++)
             {
                 System.Threading.Thread.Sleep(MonToolConfiguration.REQUEST_TIMEOUT);
-                CapabilitiesRequestAndCapabilitiesReply(monitor.PhysicalMonitor.hPhysicalMonitor, pszASCIICapabilitiesString, dwCapabilitiesStringLengthInCharacters);
+                result=CapabilitiesRequestAndCapabilitiesReply(monitor.PhysicalMonitor.hPhysicalMonitor, pszASCIICapabilitiesString, dwCapabilitiesStringLengthInCharacters);
             }
 
 
